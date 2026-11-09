@@ -5,7 +5,7 @@
 - [ ] Exact class name + method signature as given — never rename
 - [ ] No `package` line, no unused variables
 - [ ] Traced one small input by hand
-- [ ] RAN it (`java File.java`) — output matches expected
+- [ ] RAN it (`java File.java` in terminal, NOT the Run button) — output matches expected
 - [ ] Time AND space complexity, each with a reason
 
 ## My Recurring Mistakes (review before OA)
@@ -16,6 +16,8 @@
 5. "All must pass" — return false on FIRST failure inside loop, true AFTER loop
 6. Silencing a compiler error instead of asking "which variable SHOULD be here?"
 7. Not applying every review fix before resubmitting
+8. Wrong container type — pick the type of what you STORE (scores → Integer)
+9. Swapping time and space — time = how many steps, space = what I created
 
 ## Translation Method (picture → code)
 Don't jump from the whole animation to the whole code.
@@ -59,6 +61,13 @@ Don't jump from the whole animation to the whole code.
 20. `Set<Character> set = new HashSet<>();` → `add`, `remove`, `contains` (all O(1))
 21. Window length = `right - left + 1` (both ends included)
 
+### Stack / Parsing / Logic
+22. `Deque<X> stack = new ArrayDeque<>();` → `push`, `pop`, `peek`, `isEmpty`
+    Always check `isEmpty()` before `pop()`
+23. `||` = OR, `&&` = AND, `!` = NOT
+24. `Integer.parseInt("5")` → String to int (works for "-2"). Convert ONCE, at the door.
+25. Loop over a stack/collection: `for (int x : stack)`
+
 ## Big O Rules
 
 ### Time
@@ -69,11 +78,12 @@ Don't jump from the whole animation to the whole code.
 - n ≤ 10⁵ → O(n²) fails, aim for O(n) or O(n log n)
 - A while inside a for is NOT O(n²) if the inner pointer never resets
   → count TOTAL pointer moves
+- A single loop is NOT automatically O(n) → count how many times it ACTUALLY runs
 
 ### Space
 - Count only what YOU create, not the input
 - Few variables → O(1)
-- Map/array that can grow with n → O(n)
+- Map/array/stack that can grow with n → O(n)
 - Map/set with keys from a fixed set (26 letters, 128 ASCII) → O(1)
 - Recursion depth d → O(d) call stack
 
@@ -122,6 +132,32 @@ Trigger: "longest/shortest subarray/substring such that...", "at most k"
 Counter = what BREAKS the window. Answer = right - left + 1.
 O(n): left never resets → 2n total moves.
 
+### 4. Stack
+Trigger: match the MOST RECENT unmatched thing, undo/cancel previous, brackets
+    Deque<Integer> stack = new ArrayDeque<>();
+    for (each item) {
+        // opener / value → push
+        // closer / cancel → check isEmpty(), then pop (and compare)
+    }
+    // end: leftovers on stack mean something
+- Read 2nd item: pop top, peek, push top back
+- Stack type = what you STORE
+
+### 5. Binary Search
+Trigger: sorted + find, "O(log n)", "first/last position where..."
+    int lo = 0, hi = n - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;   // or return lo = insert position
+- `lo <= hi` (one element left still needs checking)
+- `mid + 1` / `mid - 1` (never `= mid` → infinite loop)
+- `lo + (hi - lo) / 2` (avoids overflow)
+- After loop: lo = first index where nums[i] >= target
+
 ## Problems Solved
 | # | Problem | Pattern | File |
 |---|---|---|---|
@@ -132,3 +168,6 @@ O(n): left never resets → 2n total moves.
 | 5 | Move Zeroes (LC 283) | Two Pointers — read/write | 02_two_pointers/MoveZeroes.java |
 | 6 | Max Vowels in Substring (LC 1456) | Sliding Window — fixed | 03_sliding_window/MaxVowels.java |
 | 7 | Max Consecutive Ones III (LC 1004) | Sliding Window — variable | 03_sliding_window/LongestOnes.java |
+| 8 | Baseball Game (LC 682) | Stack — undo | 04_stack/BaseballGame.java |
+| 9 | Valid Parentheses (LC 20) | Stack — matching | 04_stack/ValidParanthesis.java |
+| 10 | Search Insert Position (LC 35) | Binary Search | 05_binary_search/SearchInsert.java |
