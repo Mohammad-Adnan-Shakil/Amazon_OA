@@ -5,8 +5,24 @@
 - [ ] Exact class name + method signature as given — never rename
 - [ ] No `package` line, no unused variables
 - [ ] Traced one small input by hand
-- [ ] RAN it — output matches expected
+- [ ] RAN it (`java File.java`) — output matches expected
 - [ ] Time AND space complexity, each with a reason
+
+## My Recurring Mistakes (review before OA)
+1. Not running before submitting
+2. Mixing what variables MEAN — key vs value, counter vs answer, letter vs count
+3. Scope — declaring a variable inside a loop, then using it outside
+4. Inverted conditions — `==` vs `!=`, return true/false swapped
+5. "All must pass" — return false on FIRST failure inside loop, true AFTER loop
+6. Silencing a compiler error instead of asking "which variable SHOULD be here?"
+7. Not applying every review fix before resubmitting
+
+## Translation Method (picture → code)
+Don't jump from the whole animation to the whole code.
+1. List the EVENTS in the animation (element enters, window breaks, element leaves...)
+2. For each event, ask: what changes, and when?
+3. Each answer = one line of Java
+4. Drop those lines into the pattern template
 
 ## Java Syntax Cheat Sheet
 
@@ -39,6 +55,10 @@
 18. Run one file: `java FileName.java` (bypasses VS Code build errors)
 19. "Could not find or load main class" = compile failed → check Problems tab
 
+### HashSet / Windows
+20. `Set<Character> set = new HashSet<>();` → `add`, `remove`, `contains` (all O(1))
+21. Window length = `right - left + 1` (both ends included)
+
 ## Big O Rules
 
 ### Time
@@ -47,12 +67,14 @@
 - Order: O(1) < O(log n) < O(n) < O(n log n) < O(n²)
 - Halving each step → O(log n). Sorting → O(n log n)
 - n ≤ 10⁵ → O(n²) fails, aim for O(n) or O(n log n)
+- A while inside a for is NOT O(n²) if the inner pointer never resets
+  → count TOTAL pointer moves
 
 ### Space
 - Count only what YOU create, not the input
 - Few variables → O(1)
 - Map/array that can grow with n → O(n)
-- Map with keys from a fixed set (26 letters) → O(1)
+- Map/set with keys from a fixed set (26 letters, 128 ASCII) → O(1)
 - Recursion depth d → O(d) call stack
 
 ## Pattern Templates
@@ -85,3 +107,28 @@ Trigger: "subarray/substring of length k"
         // add s[right], remove s[left], left++, update max
     }
 Track ONE number (sum/count), never the window contents.
+
+### 3b. Sliding Window — variable size
+Trigger: "longest/shortest subarray/substring such that...", "at most k"
+    int left = 0, best = 0;   // + counter for what BREAKS the window
+    for (int right = 0; right < n; right++) {
+        // add nums[right] to counter
+        while (window broken) {
+            // remove nums[left] from counter
+            left++;
+        }
+        best = Math.max(best, right - left + 1);
+    }
+Counter = what BREAKS the window. Answer = right - left + 1.
+O(n): left never resets → 2n total moves.
+
+## Problems Solved
+| # | Problem | Pattern | File |
+|---|---|---|---|
+| 1 | First Unique Character (LC 387) | HashMap — counting | 01_hashmap/FirstUniqChar.java |
+| 2 | Ransom Note (LC 383) | HashMap — counting | 01_hashmap/RansomNote.java |
+| 3 | Valid Anagram (LC 242) | HashMap — map equality | 01_hashmap/ValidAnagram.java |
+| 4 | Valid Palindrome (LC 125) | Two Pointers — opposite | 02_two_pointers/ValidPalindrome.java |
+| 5 | Move Zeroes (LC 283) | Two Pointers — read/write | 02_two_pointers/MoveZeroes.java |
+| 6 | Max Vowels in Substring (LC 1456) | Sliding Window — fixed | 03_sliding_window/MaxVowels.java |
+| 7 | Max Consecutive Ones III (LC 1004) | Sliding Window — variable | 03_sliding_window/LongestOnes.java |
